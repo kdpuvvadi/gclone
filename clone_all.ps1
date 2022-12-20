@@ -16,7 +16,12 @@ $getRepoList | ForEach-Object -Process {
         Write-Host "Done" -ForegroundColor Green
     }
     else {
-        Write-Host "Skipping cloning $($_.name)"
+        Write-Host "Repo $($_.name) already exists in the drive." -ForegroundColor Red
+        Write-Host "Pulling $($_.name)" -ForegroundColor Green
+        Set-Location $($_.name)
+        git pull
+        Write-Host "Done" -ForegroundColor Green
+        Set-Location ..
     }
     Set-Location ..
 }
