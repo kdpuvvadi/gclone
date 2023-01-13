@@ -1,13 +1,20 @@
+param (
+    [string]$username=$null
+)
+
 $oldPreference = $ErrorActionPreference
-$ErrorActionPreference = ‘stop’
+$ErrorActionPreference = 'stop'
 try { if (Get-Command gh) {  } }
 Catch { “GitHub cli is not installed. Please install”;RETURN $false }
+
+if ($username) { } else { $username=(gh api /user --jq .login) }
+write-host "Selected username: $username" 
 
 If(!(test-path -PathType container $pwd/all))
 {
     New-Item -ItemType Directory -Path $pwd/all | Out-Null
 }
-$getRepoList = (gh repo list -L 200  --json nameWithOwner --json name | ConvertFrom-Json)
+$getRepoList = (gh repo list $username -L 200  --json nameWithOwner --json name | ConvertFrom-Json)
 $getRepoList | ForEach-Object -Process {
     Set-Location all
     if (!(test-path -PathType container $($_.name))){ 
