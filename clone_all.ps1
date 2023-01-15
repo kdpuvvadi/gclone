@@ -21,7 +21,7 @@ if ( !(Test-Path -PathType container $USER_HOME) ) {
     New-Item -ItemType Directory -Path $USER_HOME | Out-Null
 }
 
-$getRepoList = (gh repo list $username -L 200  --json nameWithOwner --json name | ConvertFrom-Json)
+$getRepoList = (gh repo list $username -L 6969  --json nameWithOwner --json name | ConvertFrom-Json)
 $getRepoList | ForEach-Object -Process {
     Set-Location all\$($username)
     if (!(test-path -PathType container $($_.name))){ 
