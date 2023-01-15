@@ -22,7 +22,8 @@ if ( !(Test-Path -PathType container $USER_HOME) ) {
 }
 
 $getRepoList = (gh repo list $username -L 6969  --json nameWithOwner --json name | ConvertFrom-Json)
-$getRepoList | ForEach-Object -Process {
+$getRepoList | ForEach-Object -Begin { $x=$getRepoList.Count } -Process {
+    Write-Host "Remaining: $x"
     Set-Location all\$($username)
     if (!(test-path -PathType container $($_.name))){ 
         Write-Host "Cloning $($_.name) " -ForegroundColor Green
@@ -38,6 +39,7 @@ $getRepoList | ForEach-Object -Process {
         Set-Location $USER_HOME
     }
     Set-Location $HOME_PATH
+    $x--
 }
 
 $ErrorActionPreference = $oldPreference
