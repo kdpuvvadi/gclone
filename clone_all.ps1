@@ -26,13 +26,13 @@ $getRepoList | ForEach-Object -Begin { $x=$getRepoList.Count } -Process {
     Write-Host "Remaining: $x"
     Set-Location all\$($username)
     if (!(test-path -PathType container $($_.name))){ 
-        Write-Host "Cloning $($_.name) " -ForegroundColor Green
+        Write-Host "Cloning $($_.nameWithOwner) " -ForegroundColor Green
         gh repo clone $($_.nameWithOwner) $($_.name) 
         Write-Host "Done" -ForegroundColor Green
     }
     else {
-        Write-Host "Repo $($_.name) already exists in the drive." -ForegroundColor Red
-        Write-Host "Pulling $($_.name)" -ForegroundColor Green
+        Write-Host "Repo $($_.nameWithOwner) already exists in the drive." -ForegroundColor Red
+        Write-Host "Pulling $($_.nameWithOwner)" -ForegroundColor Green
         Set-Location $($_.name)
         git pull
         Write-Host "Done" -ForegroundColor Green
