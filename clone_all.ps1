@@ -7,6 +7,7 @@ $ErrorActionPreference = 'stop'
 try { if (Get-Command gh) {  } }
 Catch { “GitHub cli is not installed. Please install”;RETURN $false }
 
+$HOME_PATH=(Get-Location)
 if ($username) { } else { $username=(gh api /user --jq .login) }
 write-host "Selected username: $username" 
 
@@ -14,9 +15,15 @@ If(!(test-path -PathType container $pwd/all))
 {
     New-Item -ItemType Directory -Path $pwd/all | Out-Null
 }
+$USER_HOME="$HOME_PATH\all\$($username)"
+
+if ( !(Test-Path -PathType container $USER_HOME) ) {
+    New-Item -ItemType Directory -Path $USER_HOME | Out-Null
+}
+
 $getRepoList = (gh repo list $username -L 200  --json nameWithOwner --json name | ConvertFrom-Json)
 $getRepoList | ForEach-Object -Process {
-    Set-Location all
+    Set-Location all\$($username)
     if (!(test-path -PathType container $($_.name))){ 
         Write-Host "Cloning $($_.name) " -ForegroundColor Green
         gh repo clone $($_.nameWithOwner) $($_.name) 
@@ -28,9 +35,9 @@ $getRepoList | ForEach-Object -Process {
         Set-Location $($_.name)
         git pull
         Write-Host "Done" -ForegroundColor Green
-        Set-Location ..
+        Set-Location $USER_HOME
     }
-    Set-Location ..
+    Set-Location $HOME_PATH
 }
 
 $ErrorActionPreference = $oldPreference
